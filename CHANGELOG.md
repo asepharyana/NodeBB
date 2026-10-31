@@ -8,7 +8,7 @@
 ##### Bug Fixes
 
 *  xss in chat message restore via translateHtml (760ded45)
-*  add dedicated purge button to chat messages, same patter as posts (cdde44e5)
+*  add dedicated purge button to chat messages, same pattern as posts (cdde44e5)
 
 #### v4.16.6 (2026-10-30)
 
@@ -14247,13 +14247,13 @@
 
 * **openapi:**  missing commonprops addition (0dc55bbc)
 
-#### 1.14.3 (2020-07-08)
+#### v1.14.3 (2020-07-08)
 
 ##### Bug Fixes
 
 *  improper targetUid check during password change (c2477d9d)
 
-#### 1.14.2 (2020-07-15)
+#### v1.14.2 (2020-07-15)
 
 ##### Chores
 
@@ -14293,7 +14293,7 @@
 * flag.showModal on flag modal appearance (3379d65f)
 * NodeBB/NodeBB (2fba0a14)
 
-#### 1.14.1 (2020-07-08)
+#### v1.14.1 (2020-07-08)
 
 ##### New Features
 
@@ -14348,7 +14348,7 @@
 
 *  bad changelog (a761e31f)
 
-#### 1.14.0 (2020-07-02)
+#### v1.14.0 (2020-07-02)
 
 ##### Chores
 
@@ -14839,7 +14839,7 @@
 
 *  bad changelog (a761e31f)
 
-#### 1.13.3 (2020-05-08)
+#### v1.13.3 (2020-05-08)
 
 ##### Chores
 
@@ -15070,7 +15070,7 @@
 *  getUsersCSV to use batch lib (1efb238a)
 *  reorganized socket.io admin modules (e1c6c3b2)
 
-#### 1.13.2 (2020-02-05)
+#### v1.13.2 (2020-02-05)
 
 ##### Chores
 
@@ -15164,7 +15164,7 @@
 
 *  messaging (30c50361)
 
-#### 1.13.1 (2019-12-19)
+#### v1.13.1 (2019-12-19)
 
 ##### Chores
 
@@ -15233,7 +15233,7 @@
 *  change to const/let (3454a24b)
 *  shorter returns (cec00795)
 
-#### 1.13.0 (2019-11-13)
+#### v1.13.0 (2019-11-13)
 
 ##### Chores
 
@@ -15844,7 +15844,7 @@
 
 *  accidental removal of some needed translation source strings (868dedd1)
 
-#### 1.12.2 (2019-05-15)
+#### v1.12.2 (2019-05-15)
 
 ##### Chores
 
@@ -15926,7 +15926,7 @@
   *  update dependency nodebb-plugin-composer-default to v6.2.12 (#7538) (a54f8f00)
   *  update dependency mongodb to v3.2.3 (97a7f02f)
 
-#### 1.12.1 (2019-04-10)
+#### v1.12.1 (2019-04-10)
 
 ##### Chores
 
@@ -16029,7 +16029,7 @@
   *  update dependency nodebb-theme-persona to v9.1.25 (#7436) (9887bb4f)
   *  update dependency nodebb-plugin-composer-default to v6.2.8 (#7435) (c18f2e1f)
 
-#### 1.12.0 (2019-03-06)
+#### v1.12.0 (2019-03-06)
 
 ##### Chores
 
@@ -16177,7 +16177,7 @@
 *  #7296, local login privilege available to registered-users only (7fb3c168)
 *  #7094 (d03220cd)
 
-#### 1.11.2 (2019-01-24)
+#### v1.11.2 (2019-01-24)
 
 ##### Chores
 
@@ -16486,7 +16486,7 @@
   *  newlines in public/src as well (f7bd398e)
   *  enforcing newline on chained calls (95cc27f1)
 
-#### 1.11.1 (2018-12-14)
+#### v1.11.1 (2018-12-14)
 
 ##### Chores
 
@@ -16573,7 +16573,7 @@
 
 * **eslint:**  match operator-linebreak preferences (ba619c7e)
 
-#### 1.11.0 (2018-11-28)
+#### v1.11.0 (2018-11-28)
 
 ##### Chores
 
