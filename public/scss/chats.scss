@@ -68,23 +68,29 @@ body.page-user-chats {
 					opacity: 0;
 					transition: $transition-fade;
 					&:has([aria-expanded="true"]) { opacity: 1; }
-					[data-action="restore"], [data-action="unpin"], [data-action="purge"] { display: none; }
+
+					// State-specific actions are hidden until the message reaches
+					// the matching state (see `.deleted` and `.pinned` below).
+					[data-action="restore"],
+					[data-action="purge"],
+					[data-action="unpin"] { display: none; }
 				}
 				&:hover {
-					.controls { opacity: 1;	}
+					.controls { opacity: 1; }
 				}
 			}
 			&.deleted {
 				.message-body { opacity: 0.3; }
 				.message-body-wrapper .controls {
 					[data-action] { display: none; }
-					[data-action="restore"], [data-action="purge"] { display: block; }
+					[data-action="restore"],
+					[data-action="purge"] { display: block; }
 				}
 			}
 			&.pinned {
 				.message-body-wrapper .controls {
 					[data-action="pin"] { display: none; }
-					[data-action="unpin"] { display: block;}
+					[data-action="unpin"] { display: block; }
 				}
 			}
 		}

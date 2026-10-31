@@ -480,6 +480,14 @@ define('forum/chats', [
 		});
 	};
 
+	/**
+	 * Binds a delegated click handler that dispatches chat message actions
+	 * (reply, edit, delete, restore, purge, pin, unpin, flag) to their handlers.
+	 *
+	 * @param {JQuery} element Container holding the chat messages
+	 * @param {string|number} roomId Chat room identifier
+	 * @returns {void}
+	 */
 	Chats.addActionHandlers = function (element, roomId) {
 		element.on('click', '[data-mid] [data-action]', function () {
 			const msgEl = $(this).parents('[data-mid]');
@@ -509,7 +517,7 @@ define('forum/chats', [
 					pinnedMessages.unpin(messageId, roomId);
 					break;
 				case 'flag':
-					Chats.flagMessage(msgEl.attr('data-mid'), roomId);
+					Chats.flagMessage(messageId, roomId);
 					break;
 			}
 		});

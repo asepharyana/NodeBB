@@ -15,7 +15,7 @@
 		{{{ end }}}
 		<span class="chat-timestamp text-muted timeago" title="{messages.timestampISO}"></span>
 
-		<div component="chat/message/edited" class="text-muted ms-auto {{{ if !messages.edited }}}hidden{{{ end }}}" title="{{tx("global:edited-timestamp", isoTimeToLocaleString(messages.editedISO, config.userLang))}}"><i class="fa fa-edit"></i></span></div>
+		<div component="chat/message/edited" class="text-muted ms-auto {{{ if !messages.edited }}}hidden{{{ end }}}" title="{{tx("global:edited-timestamp", isoTimeToLocaleString(messages.editedISO, config.userLang))}}"><i class="fa fa-edit"></i></div>
 	</div>
 	<div class="message-body-wrapper">
 		<div component="chat/message/body" class="message-body ps-0 py-0 text-break mb-last-0 mb-3">
@@ -45,7 +45,7 @@
 						</li>
 						{{{ end }}}
 
-						{{{ if (isAdminOrGlobalMod || isOwner )}}}
+						{{{ if (isAdminOrGlobalMod || isOwner) }}}
 						<li>
 							<a href="#" class="dropdown-item rounded-1" data-action="pin" role="menuitem"><span class="d-inline-flex align-items-center gap-2"><i class="fa fa-fw fa-thumbtack text-muted"></i> {{tx("modules:chat.pin-message")}}</span></a>
 						</li>

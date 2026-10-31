@@ -300,6 +300,16 @@ define('forum/chats/messages', [
 		socket.on('connect', onChatReconnect);
 	};
 
+	/**
+	 * Finds the reply-quote element that renders the given message as a parent.
+	 *
+	 * @param {string|number} messageId Message identifier
+	 * @returns {JQuery} Parent message element(s)
+	 */
+	function parentMessageEl(messageId) {
+		return $(`[component="chat/message/parent"][data-parent-mid="${messageId}"]`);
+	}
+
 	async function onChatMessageEdited(data) {
 		await Promise.all(data.messages.map(async (message) => {
 			const self = parseInt(message.fromuid, 10) === parseInt(app.user.uid, 10);
@@ -314,23 +324,21 @@ define('forum/chats/messages', [
 				componentsToReplace.forEach((cmp) => {
 					msgEl.find(cmp).replaceWith(html.find(cmp));
 				});
-				messages.onMessagesAddedToDom(components.get('chat/message', message.mid));
+				messages.onMessagesAddedToDom(msgEl);
 			}
-			const parentEl = $(`[component="chat/message/parent"][data-parent-mid="${message.mid}"]`);
+			const parentEl = parentMessageEl(message.mid);
 			if (parentEl.length) {
 				parentEl.find('[component="chat/message/parent/content"]').html(
 					html.find('[component="chat/message/body"]').html()
 				);
-				messages.onMessagesAddedToDom(
-					$(`[component="chat/message/parent"][data-parent-mid="${message.mid}"]`)
-				);
+				messages.onMessagesAddedToDom(parentEl);
 			}
 		}));
 	}
 
 	function onChatMessageDeleted(messageId) {
 		const msgEl = components.get('chat/message', messageId);
-		const parentEl = $(`[component="chat/message/parent"][data-parent-mid="${messageId}"]`);
+		const parentEl = parentMessageEl(messageId);
 		const isSelf = parseInt(msgEl.attr('data-uid'), 10) === app.user.uid;
 		const isParentSelf = parseInt(parentEl.attr('data-uid'), 10) === app.user.uid;
 		msgEl.toggleClass('deleted', true);
@@ -347,7 +355,7 @@ define('forum/chats/messages', [
 
 	function onChatMessageRestored(message) {
 		const msgEl = components.get('chat/message', message.messageId);
-		const parentEl = $(`[component="chat/message/parent"][data-parent-mid="${message.messageId}"]`);
+		const parentEl = parentMessageEl(message.messageId);
 		const isSelf = parseInt(msgEl.attr('data-uid'), 10) === app.user.uid;
 		const isParentSelf = parseInt(parentEl.attr('data-uid'), 10) === app.user.uid;
 		msgEl.toggleClass('deleted', false);
@@ -355,13 +363,13 @@ define('forum/chats/messages', [
 		if (!isSelf) {
 			msgEl.find('[component="chat/message/body"]')
 				.html(message.content);
-			messages.onMessagesAddedToDom(components.get('chat/message', message.messageId));
+			messages.onMessagesAddedToDom(msgEl);
 		}
 
 		if (!isParentSelf && parentEl.length) {
 			parentEl.find('[component="chat/message/parent/content"]')
 				.html(message.content);
-			messages.onMessagesAddedToDom($(`[component="chat/message/parent"][data-parent-mid="${message.messageId}"]`));
+			messages.onMessagesAddedToDom(parentEl);
 		}
 	}
 
@@ -412,33 +420,74 @@ define('forum/chats/messages', [
 		}
 	};
 
-	messages.delete = function (messageId, roomId) {
-		modals.confirm('[[modules:chat.delete-message-confirm]]', function (ok) {
+	/**
+	 * Builds the API route for a single chat message.
+	 *
+	 * @param {string|number} roomId Chat room identifier
+	 * @param {string|number} messageId Message identifier
+	 * @returns {string} Relative API route for the message
+	 */
+	function messageRoute(roomId, messageId) {
+		return `/chats/${roomId}/messages/${encodeURIComponent(messageId)}`;
+	}
+
+	/**
+	 * Asks the user for confirmation before running an action.
+	 *
+	 * @param {string} confirmMessage Translated confirmation prompt
+	 * @param {Function} action Callback returning a promise for the confirmed action
+	 * @returns {void}
+	 */
+	function confirmAndRun(confirmMessage, action) {
+		modals.confirm(confirmMessage, function (ok) {
 			if (!ok) {
 				return;
 			}
 
-			api.del(`/chats/${roomId}/messages/${encodeURIComponent(messageId)}/state`, {}).then(() => {
+			action().catch(alerts.error);
+		});
+	}
+
+	/**
+	 * Soft-deletes a chat message after confirmation, so it can be restored later.
+	 *
+	 * @param {string|number} messageId Message identifier
+	 * @param {string|number} roomId Chat room identifier
+	 * @returns {void}
+	 */
+	messages.delete = function (messageId, roomId) {
+		confirmAndRun('[[modules:chat.delete-message-confirm]]', () => {
+			return api.del(`${messageRoute(roomId, messageId)}/state`, {}).then(() => {
 				components.get('chat/message', messageId).toggleClass('deleted', true);
-			}).catch(alerts.error);
+			});
 		});
 	};
 
+	/**
+	 * Restores a previously soft-deleted chat message.
+	 *
+	 * @param {string|number} messageId Message identifier
+	 * @param {string|number} roomId Chat room identifier
+	 * @returns {void}
+	 */
 	messages.restore = function (messageId, roomId) {
-		api.put(`/chats/${roomId}/messages/${encodeURIComponent(messageId)}/state`, {}).then(() => {
+		api.put(`${messageRoute(roomId, messageId)}/state`, {}).then(() => {
 			components.get('chat/message', messageId).toggleClass('deleted', false);
 		}).catch(alerts.error);
 	};
 
+	/**
+	 * Permanently removes a chat message after confirmation.
+	 *
+	 * @param {string|number} messageId Message identifier
+	 * @param {string|number} roomId Chat room identifier
+	 * @returns {void}
+	 */
 	messages.purge = function (messageId, roomId) {
-		modals.confirm('[[modules:chat.purge-message-confirm]]', function (ok) {
-			if (!ok) {
-				return;
-			}
-
-			api.del(`/chats/${roomId}/messages/${encodeURIComponent(messageId)}`, {}).then(() => {
+		confirmAndRun('[[modules:chat.purge-message-confirm]]', () => {
+			return api.del(messageRoute(roomId, messageId), {}).then(() => {
 				components.get('chat/message', messageId).remove();
-			}).catch(alerts.error);
+			});
 		});
 	};
 
