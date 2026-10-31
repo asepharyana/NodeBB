@@ -418,16 +418,28 @@ define('forum/chats/messages', [
 				return;
 			}
 
-			api.del(`/chats/${roomId}/messages/${encodeURIComponent(messageId)}`, {}).then(() => {
+			api.del(`/chats/${roomId}/messages/${encodeURIComponent(messageId)}/state`, {}).then(() => {
 				components.get('chat/message', messageId).toggleClass('deleted', true);
 			}).catch(alerts.error);
 		});
 	};
 
 	messages.restore = function (messageId, roomId) {
-		api.post(`/chats/${roomId}/messages/${encodeURIComponent(messageId)}`, {}).then(() => {
+		api.put(`/chats/${roomId}/messages/${encodeURIComponent(messageId)}/state`, {}).then(() => {
 			components.get('chat/message', messageId).toggleClass('deleted', false);
 		}).catch(alerts.error);
+	};
+
+	messages.purge = function (messageId, roomId) {
+		modals.confirm('[[modules:chat.purge-message-confirm]]', function (ok) {
+			if (!ok) {
+				return;
+			}
+
+			api.del(`/chats/${roomId}/messages/${encodeURIComponent(messageId)}`, {}).then(() => {
+				components.get('chat/message', messageId).remove();
+			}).catch(alerts.error);
+		});
 	};
 
 	return messages;
